@@ -10,9 +10,9 @@ class Recipe(ConanFile):
 
     def requirements(self):
         self.requires("fmt/10.1.0")    # string parsing
-        self.requires("quill/3.3.1")   # logging
+        self.requires("quill/2.9.2")   # logging
         self.requires("libcurl/8.2.1")
-        self.requires("glaze/1.3.5")
+        self.requires("glaze/1.2.6")
         self.requires("pybind11/2.10.4")
 
         self.requires("argparse/2.9")  # argument parsing
