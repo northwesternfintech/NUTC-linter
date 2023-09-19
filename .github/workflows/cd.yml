@@ -31,6 +31,16 @@ jobs:
       - uses: actions/checkout@v3
         with:
           submodules: 'recursive'
+
+      - name: Configure gcloud
+        run: |
+          gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
+          gcloud auth configure-docker
+
+      - name: Authenticate with Google Cloud
+        run: echo "${{ secrets.GCP_SA_KEY }}" | gcloud auth activate-service-account --key-file=-
+        env:
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
  
       - name: Install LLVM 16
         run: |
@@ -79,4 +89,10 @@ jobs:
         run: cmake --install build --config Release --prefix prefix
 
       - name: Create Dockerimage
-        run: docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t stevenewald/nutc-linter:latest . #--push
+        run: docker build -t nutc-linter:latest .
+
+
+      - name: Push Docker image
+        run: |
+          docker tag nutc-linter:latest gcr.io/${{ secrets.GCP_PROJECT_ID }}/nutc-linter:latest
+          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/nutc-linter:latest
