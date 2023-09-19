@@ -36,14 +36,23 @@ jobs:
         run: |
           gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
           gcloud auth configure-docker
-      
+
       - name: Write GCP Service Account Key to File
-        run: echo "$GCP_SA_KEY" > gcp-sa-key.json
+        run: echo "$GCP_SA_KEY" > ./.github/terraform/gcp-sa-key.json
         env:
           GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
 
       - name: Authenticate with Google Cloud
-        run: gcloud auth activate-service-account --key-file=gcp-sa-key.json
+        run: gcloud auth activate-service-account --key-file=./.github/terraform/gcp-sa-key.json
+
+      # just for testing, remove later
+      - name: Terraform Init
+        run: terraform init
+        working-directory: ./.github/terraform
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
+        working-directory: ./.github/terraform
  
       - name: Install LLVM 16
         run: |
