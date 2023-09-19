@@ -44,8 +44,6 @@ jobs:
 
       - name: Authenticate with Google Cloud
         run: gcloud auth activate-service-account --key-file=gcp-sa-key.json
-
-
  
       - name: Install LLVM 16
         run: |
@@ -96,8 +94,18 @@ jobs:
       - name: Create Dockerimage
         run: docker build -t nutc-linter:latest .
 
-
       - name: Push Docker image
         run: |
           docker tag nutc-linter:latest gcr.io/${{ secrets.GCP_PROJECT_ID }}/nutc-linter:latest
           docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/nutc-linter:latest
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.0.0
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
