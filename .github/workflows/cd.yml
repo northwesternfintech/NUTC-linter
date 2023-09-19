@@ -55,7 +55,7 @@ jobs:
         working-directory: ./.github/terraform
 
       - name: Terraform Sync
-        run: terraform import google_cloud_run_service.default projects/nutc-web/locations/us-central1/services/google_cloud_run_service
+        run: terraform import google_cloud_run_service.default projects/nutc-web/locations/us-central1/services/nutc-linter
         working-directory: ./.github/terraform
 
       - name: Install LLVM 16
