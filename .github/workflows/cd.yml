@@ -79,5 +79,4 @@ jobs:
         run: cmake --install build --config Release --prefix prefix
 
       - name: Create Dockerimage
-        working-directory: build
         run: docker build -t nutc-linter:latest .
