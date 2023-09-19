@@ -32,32 +32,6 @@ jobs:
         with:
           submodules: 'recursive'
 
-      - name: Configure gcloud
-        run: |
-          gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
-          gcloud auth configure-docker
-
-      - name: Write GCP Service Account Key to File
-        run: echo "$GCP_SA_KEY" > ./.github/terraform/gcp-sa-key.json
-        env:
-          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
-
-      - name: Authenticate with Google Cloud
-        run: gcloud auth activate-service-account --key-file=./.github/terraform/gcp-sa-key.json
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
-        with:
-          terraform_version: 1.0.0
-
-      - name: Terraform Init
-        run: terraform init
-        working-directory: ./.github/terraform
-
-      - name: Terraform Sync
-        run: terraform import google_cloud_run_service.default us-central1/nutc-web/nutc-linter
-        working-directory: ./.github/terraform
- 
       - name: Install LLVM 16
         run: |
             wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key | sudo tee /etc/apt/trusted.gpg.d/apt.llvm.org.asc
@@ -112,6 +86,31 @@ jobs:
           docker tag nutc-linter:latest gcr.io/${{ secrets.GCP_PROJECT_ID }}/nutc-linter:latest
           docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/nutc-linter:latest
 
+      - name: Configure gcloud
+        run: |
+          gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
+          gcloud auth configure-docker
+
+      - name: Write GCP Service Account Key to File
+        run: echo "$GCP_SA_KEY" > ./.github/terraform/gcp-sa-key.json
+        env:
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Authenticate with Google Cloud
+        run: gcloud auth activate-service-account --key-file=./.github/terraform/gcp-sa-key.json
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.0.0
+
+      - name: Terraform Init
+        run: terraform init
+        working-directory: ./.github/terraform
+
+      - name: Terraform Sync
+        run: terraform import google_cloud_run_service.default us-central1/nutc-web/nutc-linter
+        working-directory: ./.github/terraform
 
       - name: Terraform Apply
         run: terraform apply -auto-approve
