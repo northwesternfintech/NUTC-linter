@@ -79,4 +79,4 @@ jobs:
         run: cmake --install build --config Release --prefix prefix
 
       - name: Create Dockerimage
-        run: docker build -t nutc-linter:latest .
+        run: docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t stevenewald/nutc-linter:latest . #--push
