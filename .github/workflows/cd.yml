@@ -42,6 +42,13 @@ jobs:
         env:
           GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
 
+      - name: Deploy to Cloud Run
+        run: |
+        gcloud run deploy nutc-linter \
+          --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/nutc-linter:latest \
+          --region us-central1 \
+          --platform managed
+
       - name: Authenticate with Google Cloud
         run: gcloud auth activate-service-account --key-file=./.github/terraform/gcp-sa-key.json
 
@@ -98,20 +105,3 @@ jobs:
         run: |
           docker tag nutc-linter:latest gcr.io/${{ secrets.GCP_PROJECT_ID }}/nutc-linter:latest
           docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/nutc-linter:latest
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
-        with:
-          terraform_version: 1.0.0
-
-      - name: Terraform Init
-        run: terraform init
-        working-directory: ./.github/terraform
-
-      - name: Terraform Sync
-        run: terraform import google_cloud_run_service.default us-central1/nutc-web/nutc-linter
-        working-directory: ./.github/terraform
-
-      - name: Terraform Apply
-        run: terraform apply -auto-approve
-        working-directory: ./.github/terraform
