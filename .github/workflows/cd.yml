@@ -44,15 +44,6 @@ jobs:
 
       - name: Authenticate with Google Cloud
         run: gcloud auth activate-service-account --key-file=./.github/terraform/gcp-sa-key.json
-
-      # just for testing, remove later
-      - name: Terraform Init
-        run: terraform init
-        working-directory: ./.github/terraform
-
-      - name: Terraform Apply
-        run: terraform apply -auto-approve
-        working-directory: ./.github/terraform
  
       - name: Install LLVM 16
         run: |
